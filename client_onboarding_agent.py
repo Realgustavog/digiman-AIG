@@ -1,4 +1,3 @@
-# Logic for Client Onboarding Agent
 import os
 import json
 from core.digiman_core import log_action, update_task_queue
@@ -10,9 +9,15 @@ class ClientOnboardingAgent:
         self.memory_file = os.path.join(self.client_path, "memory.json")
         self.queue_file = os.path.join(self.client_path, "agent_queue.json")
         self.default_agents_by_tier = {
-            "starter": ["Email Agent", "Support Agent"],
-            "pro": ["Email Agent", "CRM Agent", "Marketing Agent"],
-            "enterprise": ["Email Agent", "CRM Agent", "Marketing Agent", "Manager Agent", "Visuals Agent", "Closer Agent"]
+            "starter": ["Manager Agent", "Email Agent", "CRM Agent", "Support Agent", "WebBuilder Agent"],
+            "pro": ["Marketing Agent", "Analyst Agent", "Socials Agent", "Sales Agent"],
+            "enterprise": [
+                "Content Agent", "Visuals Agent", "Outreach Agent", "Subscription Agent",
+                "Closer Agent", "Financial Allocation Agent", "Monetization Agent",
+                "Autonomous Sales Replicator", "Franchise Builder Agent", "Franchise Intelligence Agent",
+                "Franchise Relationship Agent", "Tutorial Agent", "Scout Agent", "Partnership Scout Agent",
+                "Client Onboarding Agent"
+            ]
         }
 
     def run_task(self, task):
@@ -41,21 +46,19 @@ class ClientOnboardingAgent:
         log_action("Client Onboarding Agent", f"Assigned subscription: {plan}", self.client_id)
 
     def activate_default_agents(self, plan):
-        active_agents = self.default_agents_by_tier.get(plan, [])
+        active_agents = []
+        for tier in ["starter", "pro", "enterprise"]:
+            if tier == "starter" or (tier == "pro" and plan != "starter") or (tier == "enterprise" and plan == "enterprise"):
+                active_agents += self.default_agents_by_tier[tier]
         log_action("Client Onboarding Agent", f"Activated agents: {', '.join(active_agents)}", self.client_id)
 
     def seed_initial_tasks(self, plan):
-        active_agents = self.default_agents_by_tier.get(plan, [])
-        for agent in active_agents:
-            if agent == "Email Agent":
-                update_task_queue(agent, {"task": "Send welcome email", "priority": 2}, self.client_id)
-            elif agent == "Support Agent":
-                update_task_queue(agent, {"task": "Initiate onboarding support chat", "priority": 1}, self.client_id)
-            elif agent == "CRM Agent":
-                update_task_queue(agent, {"task": "Import initial lead list", "priority": 2}, self.client_id)
-            elif agent == "Marketing Agent":
-                update_task_queue(agent, {"task": "Create welcome campaign", "priority": 2}, self.client_id)
-            elif agent == "Closer Agent":
-                update_task_queue(agent, {"task": "Schedule onboarding call", "priority": 3}, self.client_id)
-            elif agent == "Manager Agent":
-                update_task_queue(agent, {"task": "Begin KPI tracking for new client", "priority": 2}, self.client_id)
+        tiers_to_load = ["starter"]
+        if plan in ["pro", "enterprise"]:
+            tiers_to_load.append("pro")
+        if plan == "enterprise":
+            tiers_to_load.append("enterprise")
+
+        for tier in tiers_to_load:
+            for agent in self.default_agents_by_tier[tier]:
+                update_task_queue(agent, {"task": "Initiate onboarding action", "priority": 2}, self.client_id)
