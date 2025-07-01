@@ -2,17 +2,26 @@
 from core.digiman_core import log_action, update_task_queue
 from core.memory_store import load_memory
 from core.metrics import metrics
+from pathlib import Path
+import json
 
 class AutonomousSalesReplicator:
     def __init__(self, client_id=None):
         self.client_id = client_id
         self.memory = load_memory(client_id)
         self.metrics = metrics
+        self.pricing = self.load_pricing()
 
     def run_task(self, task):
         log_action("Autonomous Sales Replicator", f"Running task: {task['task']}", self.client_id)
         if "replicate" in task["task"].lower():
             self.replicate_successful_strategy()
+
+    def load_pricing(self):
+        path = Path("pricing.json")
+        if path.exists():
+            return json.loads(path.read_text())
+        return {}
 
     def replicate_successful_strategy(self):
         leads = self.metrics.get("leads_generated", 0)
@@ -20,21 +29,20 @@ class AutonomousSalesReplicator:
         clients = self.metrics.get("clients_onboarded", 0)
 
         if leads < 10 or revenue < 1000:
-            log_action("Autonomous Sales Replicator", "Insufficient data to replicate strategy", self.client_id)
+            log_action("Autonomous Sales Replicator", "Not enough data to replicate. Generate more leads first.", self.client_id)
             return
 
-        high_performance_clues = []
-        for m in self.memory:
-            if "closed deal" in m.get("content", "").lower():
-                high_performance_clues.append(m["content"])
-
-        if not high_performance_clues:
-            log_action("Autonomous Sales Replicator", "No high-conversion patterns found", self.client_id)
+        clues = [m["content"] for m in self.memory if "closed deal" in m.get("content", "").lower()]
+        if not clues:
+            log_action("Autonomous Sales Replicator", "No closed deal history to replicate from.", self.client_id)
             return
 
-        summary = f"Replicate strategy: Use high-performing approach from: '{high_performance_clues[-1]}'"
-        update_task_queue("Marketing Agent", {"task": f"Create campaign based on winning strategy", "priority": 3}, self.client_id)
-        update_task_queue("Outreach Agent", {"task": f"Launch outbound to similar audience", "priority": 3}, self.client_id)
-        update_task_queue("Closer Agent", {"task": f"Use successful pitch approach", "priority": 3}, self.client_id)
+        latest_win = clues[-1]
+        summary = f"Replicate winning move: '{latest_win}'"
 
-        log_action("Autonomous Sales Replicator", f"Strategy cloned and queued to agents. Summary: {summary}", self.client_id)
+        # Queue tasks to replicate strategy across agents
+        update_task_queue("Marketing Agent", {"task": f"Replicate: {latest_win}", "priority": 3}, self.client_id)
+        update_task_queue("Outreach Agent", {"task": f"Target similar audience using: {latest_win}", "priority": 3}, self.client_id)
+        update_task_queue("Closer Agent", {"task": f"Use proven pitch: {latest_win}", "priority": 3}, self.client_id)
+
+        log_action("Autonomous Sales Replicator", f"Strategy cloned and deployed.\nPricing awareness: {self.pricing}", self.client_id)
