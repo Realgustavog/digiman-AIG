@@ -1,10 +1,16 @@
-# Executes autonomous task loop
+from pathlib import Path
+
+# Define path for enhanced autonomous_loop.py
+autonomous_loop_path = Path("/mnt/data/autonomous_loop.py")
+
+enhanced_autonomous_loop_code = '''
 import time
 from core.agent_loader import load_agents
 from core.digiman_core import log_action, update_task_queue, load_task_queue
 from core.metrics import metrics
 from gpt.gpt_router import interpret_command
 from datetime import datetime
+from pathlib import Path
 
 class AutonomousLoop:
     def __init__(self, client_id=None):
@@ -21,12 +27,11 @@ class AutonomousLoop:
 
             for task in agent_tasks:
                 try:
-                    # Run GPT interpretation before execution
                     gpt_decision = interpret_command(task["task"], self.client_id)
+                    log_action(agent_name, f"GPT interpreted: {gpt_decision}", self.client_id)
+                    self.log_reasoning(task["task"], gpt_decision)
                     task.update(gpt_decision)
-                    log_action(agent_name, f"GPT interpreted task: {gpt_decision}", self.client_id)
 
-                    # Execute agent logic
                     agent_instance.run_task(task)
 
                 except Exception as e:
@@ -35,10 +40,22 @@ class AutonomousLoop:
 
             queue[agent_name] = []
 
-        log_action("Autonomous Loop", f"Completed loop run for client: {self.client_id}", self.client_id)
+        log_action("Autonomous Loop", f"Loop completed for client: {self.client_id}", self.client_id)
         return True
 
     def loop_forever(self, interval_seconds=10):
         while True:
             self.run()
             time.sleep(interval_seconds)
+
+    def log_reasoning(self, input_text, output_json):
+        log_path = Path(f".digi/clients/{self.client_id}/gpt_reasons.log")
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(log_path, "a") as f:
+            f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
+'''
+
+# Save the enhanced autonomous_loop.py
+autonomous_loop_path.write_text(enhanced_autonomous_loop_code.strip())
+
+str(autonomous_loop_path)
