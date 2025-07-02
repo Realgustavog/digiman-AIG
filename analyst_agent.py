@@ -3,6 +3,7 @@ from core.metrics import metrics
 from core.memory_store import load_memory
 from core.digiman_core import log_action
 from pathlib import Path
+from gpt.gpt_router import interpret_command
 
 class AnalystAgent:
     def __init__(self, client_id=None):
@@ -13,6 +14,14 @@ class AnalystAgent:
 
     def run_task(self, task):
         log_action("Analyst Agent", f"Running task: {task['task']}", self.client_id)
+
+        try:
+            gpt_decision = interpret_command(task["task"], self.client_id)
+            log_action("Analyst Agent", f"GPT guidance: {gpt_decision}", self.client_id)
+            task.update(gpt_decision)
+        except Exception as e:
+            log_action("Analyst Agent", f"GPT failed: {e}", self.client_id)
+
         if "analyze" in task["task"].lower():
             self.analyze_performance()
         elif "report" in task["task"].lower():
