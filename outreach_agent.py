@@ -3,6 +3,7 @@ import json
 from core.digiman_core import log_action, update_task_queue
 from core.memory_store import load_memory
 from pathlib import Path
+from gpt.gpt_router import interpret_command
 
 class OutreachAgent:
     def __init__(self, client_id=None):
@@ -19,6 +20,14 @@ class OutreachAgent:
 
     def run_task(self, task):
         log_action("Outreach Agent", f"Running task: {task['task']}", self.client_id)
+
+        try:
+            gpt_decision = interpret_command(task["task"], self.client_id)
+            log_action("Outreach Agent", f"GPT interpreted task: {gpt_decision}", self.client_id)
+            task.update(gpt_decision)
+        except Exception as e:
+            log_action("Outreach Agent", f"GPT failed to interpret: {e}", self.client_id)
+
         if "outreach" in task["task"].lower() or "warm lead" in task["task"].lower():
             self.generate_prospect_message()
 
