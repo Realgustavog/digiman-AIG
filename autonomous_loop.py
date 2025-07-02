@@ -1,49 +1,44 @@
 # Executes autonomous task loop
-from pathlib import Path
-
-# Path to save the autonomous_loop.py
-autonomous_loop_path = Path("/mnt/data/autonomous_loop.py")
-
-# Full autonomous loop logic
-autonomous_loop_code = '''
 import time
 from core.agent_loader import load_agents
-from core.digiman_core import log_action
-from core.memory_store import load_memory
+from core.digiman_core import log_action, update_task_queue, load_task_queue
 from core.metrics import metrics
-from core.digiman_core import update_task_queue, load_task_queue
+from gpt.gpt_router import interpret_command
 from datetime import datetime
 
-def run_autonomous_loop(client_id=None):
-    agents = load_agents(client_id=client_id)
-    queue = load_task_queue(client_id)
+class AutonomousLoop:
+    def __init__(self, client_id=None):
+        self.client_id = client_id
+        self.metrics = metrics
 
-    for agent_name, agent_class in agents.items():
-        agent_instance = agent_class(client_id=client_id)
-        agent_tasks = sorted(queue.get(agent_name, []), key=lambda x: x.get("priority", 1), reverse=True)
+    def run(self):
+        agents = load_agents(client_id=self.client_id)
+        queue = load_task_queue(self.client_id)
 
-        for task in agent_tasks:
-            try:
-                agent_instance.run_task(task)
-            except Exception as e:
-                log_action(agent_name, f"Task error: {e}", client_id)
-                metrics["tasks_failed"] += 1
+        for agent_name, agent_class in agents.items():
+            agent_instance = agent_class(client_id=self.client_id)
+            agent_tasks = sorted(queue.get(agent_name, []), key=lambda x: x.get("priority", 1), reverse=True)
 
-        # Clear queue after run
-        queue[agent_name] = []
+            for task in agent_tasks:
+                try:
+                    # Run GPT interpretation before execution
+                    gpt_decision = interpret_command(task["task"], self.client_id)
+                    task.update(gpt_decision)
+                    log_action(agent_name, f"GPT interpreted task: {gpt_decision}", self.client_id)
 
-    # Log loop completion
-    log_action("Autonomous Loop", f"Completed run for client: {client_id}", client_id)
+                    # Execute agent logic
+                    agent_instance.run_task(task)
 
-    return True
+                except Exception as e:
+                    log_action(agent_name, f"Task error: {e}", self.client_id)
+                    self.metrics["tasks_failed"] += 1
 
-def loop_forever(interval_seconds=10, client_id=None):
-    while True:
-        run_autonomous_loop(client_id)
-        time.sleep(interval_seconds)
-'''
+            queue[agent_name] = []
 
-# Save the file
-autonomous_loop_path.write_text(autonomous_loop_code.strip())
+        log_action("Autonomous Loop", f"Completed loop run for client: {self.client_id}", self.client_id)
+        return True
 
-str(autonomous_loop_path)
+    def loop_forever(self, interval_seconds=10):
+        while True:
+            self.run()
+            time.sleep(interval_seconds)
