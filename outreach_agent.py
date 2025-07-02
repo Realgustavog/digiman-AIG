@@ -1,9 +1,16 @@
 # Logic for Outreach Agent
+from pathlib import Path
+
+# Define path for enhanced outreach_agent.py
+outreach_agent_path = Path("/mnt/data/outreach_agent.py")
+
+enhanced_outreach_code = '''
 import json
 from core.digiman_core import log_action, update_task_queue
 from core.memory_store import load_memory
-from pathlib import Path
 from gpt.gpt_router import interpret_command
+from datetime import datetime
+from pathlib import Path
 
 class OutreachAgent:
     def __init__(self, client_id=None):
@@ -24,6 +31,7 @@ class OutreachAgent:
         try:
             gpt_decision = interpret_command(task["task"], self.client_id)
             log_action("Outreach Agent", f"GPT interpreted task: {gpt_decision}", self.client_id)
+            self.log_reasoning(task["task"], gpt_decision)
             task.update(gpt_decision)
         except Exception as e:
             log_action("Outreach Agent", f"GPT failed to interpret: {e}", self.client_id)
@@ -47,12 +55,24 @@ class OutreachAgent:
                     hooks.append(self.prospect_cues[cue])
 
         pricing_lines = [f"{tier.title()} – ${info['price']}/mo: {', '.join(info['features'])}" for tier, info in self.pricing.items()]
-        pricing_summary = "\n".join(pricing_lines)
+        pricing_summary = "\\n".join(pricing_lines)
 
         if hooks:
-            message = "Here’s what we can do for you:\n" + "\n".join(hooks) + "\n\nOur pricing starts at $29/month:\n" + pricing_summary
+            message = "Here’s what we can do for you:\\n" + "\\n".join(hooks) + "\\n\\nOur pricing starts at $29/month:\\n" + pricing_summary
         else:
-            message = "DigiMan automates your business with AI agents. Pricing starts at just $29/month.\n" + pricing_summary
+            message = "DigiMan automates your business with AI agents. Pricing starts at just $29/month.\\n" + pricing_summary
 
-        log_action("Outreach Agent", f"Sent outreach message:\n{message}", self.client_id)
+        log_action("Outreach Agent", f"Sent outreach message:\\n{message}", self.client_id)
         update_task_queue("Sales Agent", {"task": "Follow up with engaged lead", "priority": 2}, self.client_id)
+
+    def log_reasoning(self, input_text, output_json):
+        log_path = Path(f".digi/clients/{self.client_id}/gpt_reasons.log")
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(log_path, "a") as f:
+            f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
+'''
+
+# Save the enhanced outreach_agent.py
+outreach_agent_path.write_text(enhanced_outreach_code.strip())
+
+str(outreach_agent_path)
