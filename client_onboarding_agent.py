@@ -1,6 +1,9 @@
 import os
 import json
 from core.digiman_core import log_action, update_task_queue
+from core.memory_store import load_memory
+from pathlib import Path
+from gpt.gpt_router import interpret_command
 
 class ClientOnboardingAgent:
     def __init__(self, client_id=None):
@@ -8,6 +11,7 @@ class ClientOnboardingAgent:
         self.client_path = f".digi/clients/{client_id}"
         self.memory_file = os.path.join(self.client_path, "memory.json")
         self.queue_file = os.path.join(self.client_path, "agent_queue.json")
+        self.memory = load_memory(client_id)
         self.default_agents_by_tier = {
             "starter": ["Manager Agent", "Email Agent", "CRM Agent", "Support Agent", "WebBuilder Agent"],
             "pro": ["Marketing Agent", "Analyst Agent", "Socials Agent", "Sales Agent"],
@@ -22,13 +26,21 @@ class ClientOnboardingAgent:
 
     def run_task(self, task):
         log_action("Client Onboarding Agent", f"Running task: {task['task']}", self.client_id)
+
+        try:
+            gpt_decision = interpret_command(task["task"], self.client_id)
+            log_action("Client Onboarding Agent", f"GPT interpreted onboarding task: {gpt_decision}", self.client_id)
+            task.update(gpt_decision)
+        except Exception as e:
+            log_action("Client Onboarding Agent", f"GPT failed to parse: {e}", self.client_id)
+
         if "onboard" in task["task"].lower():
             plan = task.get("plan", "starter").lower()
             self.setup_client_storage()
             self.assign_subscription(plan)
             self.activate_default_agents(plan)
             self.seed_initial_tasks(plan)
-            log_action("Client Onboarding Agent", f"Completed onboarding for plan: {plan}", self.client_id)
+            log_action("Client Onboarding Agent", f"Onboarding complete for plan: {plan}", self.client_id)
 
     def setup_client_storage(self):
         os.makedirs(self.client_path, exist_ok=True)
