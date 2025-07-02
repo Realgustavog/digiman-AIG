@@ -3,6 +3,8 @@ import os
 import json
 import logging
 from core.memory_store import load_memory, save_memory
+from pathlib import Path
+from datetime import datetime
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 logger = logging.getLogger("GPT_Router")
@@ -10,7 +12,7 @@ logger = logging.getLogger("GPT_Router")
 def interpret_command(text_input, client_id="default"):
     memory = load_memory(client_id)
     context_messages = [
-        {"role": "system", "content": "You are DigiMan, the AI COO of a business. You interpret commands and decide the best agent, task and priority to complete that command in JSON format only. You do not explain your reasoning, only return a JSON object with keys: agent, task, priority."}
+        {"role": "system", "content": "You are DigiMan, the AI COO of a business. You interpret user input and respond ONLY with a JSON object like: {'agent': '...', 'task': '...', 'priority': 1-3}. Also include a second message to yourself AFTER the JSON explaining WHY you chose that agent and task."}
     ]
     for m in memory[-5:]:
         context_messages.append(m)
@@ -23,15 +25,25 @@ def interpret_command(text_input, client_id="default"):
             messages=context_messages,
             temperature=0.2
         )
-        reply = response.choices[0].message["content"]
-        logger.info("GPT Response: %s", reply)
+        content = response.choices[0].message["content"]
+        logger.info("GPT Raw Response: %s", content)
+
+        split = content.split('}', 1)
+        json_part = split[0] + "}" if "}" in split[0] else content
+        reasoning = split[1].strip() if len(split) > 1 else ""
 
         try:
-            parsed = json.loads(reply)
+            parsed = json.loads(json_part)
             if all(k in parsed for k in ["agent", "task", "priority"]):
                 memory.append({"role": "user", "content": text_input})
-                memory.append({"role": "assistant", "content": reply})
+                memory.append({"role": "assistant", "content": json_part})
                 save_memory(client_id, memory)
+
+                log_path = Path(f".digi/clients/{client_id}/gpt_reasons.log")
+                log_path.parent.mkdir(parents=True, exist_ok=True)
+                with open(log_path, "a") as f:
+                    f.write(f"[{datetime.now()}] INPUT: {text_input}\nDECISION: {json_part}\nREASON: {reasoning}\n\n")
+
                 return parsed
             else:
                 raise ValueError("Missing keys in GPT response")
