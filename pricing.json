@@ -1,0 +1,33 @@
+{
+  "starter": {
+    "price": 29,
+    "currency": "USD",
+    "features": [
+      "Email",
+      "Support",
+      "CRM",
+      "Website",
+      "Manager"
+    ]
+  },
+  "pro": {
+    "price": 99,
+    "currency": "USD",
+    "features": [
+      "Marketing",
+      "Analyst",
+      "Sales",
+      "Socials"
+    ]
+  },
+  "enterprise": {
+    "price": 249,
+    "currency": "USD",
+    "features": [
+      "All Agents",
+      "Franchise",
+      "Monetization",
+      "Scaling"
+    ]
+  }
+}
