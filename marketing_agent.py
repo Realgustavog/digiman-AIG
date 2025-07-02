@@ -1,3 +1,9 @@
+from pathlib import Path
+
+# Define path for enhanced marketing_agent.py
+marketing_agent_path = Path("/mnt/data/marketing_agent.py")
+
+enhanced_marketing_code = '''
 # Logic for Marketing Agent
 import json
 from core.digiman_core import log_action, update_task_queue
@@ -22,6 +28,7 @@ class MarketingAgent:
         try:
             gpt_decision = interpret_command(task["task"], self.client_id)
             log_action("Marketing Agent", f"GPT interpreted task: {gpt_decision}", self.client_id)
+            self.log_reasoning(task["task"], gpt_decision)
             task.update(gpt_decision)
         except Exception as e:
             log_action("Marketing Agent", f"GPT interpretation failed: {e}", self.client_id)
@@ -97,3 +104,16 @@ class MarketingAgent:
             self.propose_campaign()
         else:
             log_action("Marketing Agent", "Auto-trigger not due yet", self.client_id)
+
+    def log_reasoning(self, input_text, output_json):
+        log_path = Path(f".digi/clients/{self.client_id}/gpt_reasons.log")
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(log_path, "a") as f:
+            f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
+'''
+
+# Save the enhanced marketing_agent.py
+marketing_agent_path.write_text(enhanced_marketing_code.strip())
+
+str(marketing_agent_path)
+
