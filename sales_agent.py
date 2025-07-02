@@ -3,6 +3,7 @@ import json
 from core.digiman_core import log_action, update_task_queue
 from core.memory_store import load_memory
 from pathlib import Path
+from gpt.gpt_router import interpret_command
 
 class SalesAgent:
     def __init__(self, client_id=None):
@@ -10,17 +11,24 @@ class SalesAgent:
         self.memory = load_memory(client_id)
         self.pricing = self.load_pricing()
         self.emotion_cues = {
-            "i'm new": "We’ve helped countless first-time founders — DigiMan handles the hard parts for you.",
-            "first time": "You don’t need experience. We provide the system. You provide the goal.",
-            "overwhelmed": "Totally understand. DigiMan takes the chaos out of building your business.",
-            "confused": "That's why we built an intuitive platform. We lead, you approve.",
-            "too much": "Think of DigiMan as your team. You’re not doing this alone.",
-            "stressed": "Let DigiMan remove your bottlenecks — so you can focus on results.",
-            "expensive": "Compared to hiring, we’re pennies on the dollar — and you get 20+ agents."
+            "i'm new": "DigiMan was built for people just like you. No experience needed.",
+            "first time": "That’s perfect — our system is built to onboard you instantly.",
+            "overwhelmed": "Let DigiMan handle the operations. You just guide the vision.",
+            "confused": "We’ll simplify it. You’ll never have to guess what to do next.",
+            "expensive": "Compared to a full team or agency, DigiMan is a fraction of the cost.",
+            "ai is scary": "That’s why DigiMan works like a team, not a tool. We manage it for you."
         }
 
     def run_task(self, task):
         log_action("Sales Agent", f"Running task: {task['task']}", self.client_id)
+
+        try:
+            gpt_decision = interpret_command(task["task"], self.client_id)
+            log_action("Sales Agent", f"GPT interpreted task: {gpt_decision}", self.client_id)
+            task.update(gpt_decision)
+        except Exception as e:
+            log_action("Sales Agent", f"GPT failed to interpret: {e}", self.client_id)
+
         if "close" in task["task"].lower() or "pitch" in task["task"].lower():
             self.deliver_pitch()
 
@@ -32,20 +40,20 @@ class SalesAgent:
 
     def deliver_pitch(self):
         user_messages = [m["content"].lower() for m in self.memory[-10:] if isinstance(m, dict) and m.get("role") == "user"]
-        emotional_responses = []
+        hooks = []
 
-        for message in user_messages:
+        for msg in user_messages:
             for cue in self.emotion_cues:
-                if cue in message:
-                    emotional_responses.append(self.emotion_cues[cue])
+                if cue in msg:
+                    hooks.append(self.emotion_cues[cue])
 
         pricing_lines = [f"{tier.title()} – ${info['price']}/mo\nIncludes: {', '.join(info['features'])}" for tier, info in self.pricing.items()]
         pricing_summary = "\n\n".join(pricing_lines)
 
-        if emotional_responses:
-            message = "\n".join(emotional_responses) + "\n\nHere’s what DigiMan offers:\n" + pricing_summary
+        if hooks:
+            message = "\n".join(hooks) + "\n\nHere’s what DigiMan offers:\n" + pricing_summary
         else:
             message = "Here’s what DigiMan offers:\n" + pricing_summary
 
-        log_action("Sales Agent", f"Delivered strategic pitch:\n{message}", self.client_id)
+        log_action("Sales Agent", f"Delivered pitch:\n{message}", self.client_id)
         update_task_queue("Closer Agent", {"task": "Follow up with warm lead and confirm tier", "priority": 3}, self.client_id)
