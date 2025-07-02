@@ -1,10 +1,4 @@
-# Logic for Email Agent
-from pathlib import Path
 
-# Save path for full enhanced EmailAgent
-email_agent_final_path = Path("/mnt/data/email_agent.py")
-
-email_agent_final_code = '''
 import os
 import json
 import imaplib
@@ -56,6 +50,11 @@ class EmailAgent:
                     if part.get_content_type() == "text/plain" and part.get_payload(decode=True):
                         body += part.get_payload(decode=True).decode(errors="ignore")
 
+                attachments = []
+                for part in msg.walk():
+                    if part.get_content_disposition() == "attachment":
+                        attachments.append(part.get_filename())
+
                 full_context = "\\n".join([m["content"] for m in self.memory[-5:] if "content" in m])
                 prompt = f"You are DigiMan, an AI email agent. User memory:\\n{full_context}\\n\\nEmail received:\\nSubject: {subject}\\nFrom: {sender}\\nBody: {body}\\n\\nClassify the sender (lead, support, spam, client), assign priority (1-3), summarize content, and suggest a reply."
 
@@ -66,11 +65,18 @@ class EmailAgent:
                 priority = response.get("priority", 2)
                 summary = response.get("summary", "General inquiry")
 
+                lead_score = 1
+                if "demo" in body.lower() or "pricing" in body.lower():
+                    lead_score += 2
+                if "urgent" in subject.lower():
+                    lead_score += 1
+
                 if category == "lead":
                     update_task_queue("CRM Agent", {
                         "task": f"Add lead: {sender}",
                         "email": sender,
                         "note": summary,
+                        "score": lead_score,
                         "priority": priority
                     }, self.client_id)
 
@@ -78,8 +84,16 @@ class EmailAgent:
                     update_task_queue("Support Agent", {
                         "task": f"Support needed: {summary}",
                         "email": sender,
+                        "attachments": attachments,
                         "priority": priority
                     }, self.client_id)
+
+                    support_tickets = sum(1 for m in self.memory if "support" in m.get("content", "").lower())
+                    if support_tickets > 3:
+                        update_task_queue("Manager Agent", {
+                            "task": "High support volume detected — investigate workflow bottlenecks.",
+                            "priority": 3
+                        }, self.client_id)
 
                 if category != "spam":
                     self.send_reply(sender, subject, reply_text)
@@ -105,4 +119,3 @@ class EmailAgent:
             smtp.quit()
         except Exception as e:
             log_action("Email Agent", f"Failed to reply to {to_email}: {e}", self.client_id)
-
