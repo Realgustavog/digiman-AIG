@@ -1,3 +1,9 @@
+from pathlib import Path
+
+# Define path for enhanced manager_agent.py
+manager_agent_path = Path("/mnt/data/manager_agent.py")
+
+enhanced_manager_code = '''
 # Logic for Manager Agent
 import json
 from core.digiman_core import log_action, update_task_queue
@@ -5,6 +11,7 @@ from core.memory_store import load_memory
 from core.metrics import metrics
 from gpt.gpt_router import interpret_command
 from datetime import datetime
+from pathlib import Path
 
 class ManagerAgent:
     def __init__(self, client_id=None):
@@ -12,7 +19,8 @@ class ManagerAgent:
         self.memory = load_memory(client_id)
         self.metrics = metrics
         self.business_phases = ["setup", "promotion", "sales", "onboarding", "client_ops"]
-        self.phase_path = f".digi/clients/{client_id}/phase.json"
+        self.phase_path = Path(f".digi/clients/{client_id}/phase.json")
+        self.reasoning_log = Path(f".digi/clients/{client_id}/gpt_reasons.log")
         self.current_phase_index = self.load_current_phase_index()
 
     def run_task(self, task):
@@ -21,6 +29,7 @@ class ManagerAgent:
         try:
             gpt_decision = interpret_command(task["task"], self.client_id)
             log_action("Manager Agent", f"GPT Decision: {gpt_decision}", self.client_id)
+            self.log_reasoning(task["task"], gpt_decision)
             task.update(gpt_decision)
         except Exception as e:
             log_action("Manager Agent", f"GPT decision error: {e}", self.client_id)
@@ -31,15 +40,16 @@ class ManagerAgent:
 
     def load_current_phase_index(self):
         try:
-            with open(self.phase_path, "r") as f:
-                data = json.load(f)
-            return self.business_phases.index(data["phase"])
+            if self.phase_path.exists():
+                data = json.loads(self.phase_path.read_text())
+                return self.business_phases.index(data["phase"])
         except:
-            return 0
+            pass
+        return 0
 
     def save_current_phase_index(self):
-        with open(self.phase_path, "w") as f:
-            json.dump({"phase": self.business_phases[self.current_phase_index]}, f, indent=2)
+        self.phase_path.parent.mkdir(parents=True, exist_ok=True)
+        self.phase_path.write_text(json.dumps({"phase": self.business_phases[self.current_phase_index]}, indent=2))
 
     def monitor_performance(self):
         if self.metrics["tasks_failed"] > 5:
@@ -66,3 +76,16 @@ class ManagerAgent:
             update_task_queue("Client Onboarding Agent", {"task": "Onboard new clients", "priority": 2}, self.client_id)
         elif phase == "client_ops":
             update_task_queue("Retention Agent", {"task": "Optimize existing client performance", "priority": 2}, self.client_id)
+
+    def log_reasoning(self, input_text, output_json):
+        self.reasoning_log.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.reasoning_log, "a") as f:
+            f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
+'''
+
+# Save the enhanced manager_agent.py
+manager_agent_path.write_text(enhanced_manager_code.strip())
+
+str(manager_agent_path)
+
+
