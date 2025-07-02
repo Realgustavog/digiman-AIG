@@ -1,3 +1,9 @@
+from pathlib import Path
+
+# Path to enhanced digiman_core.py
+core_path = Path("/mnt/data/digiman_core.py")
+
+enhanced_core_code = '''
 import os
 import json
 import logging
@@ -56,7 +62,7 @@ def log_action(agent_name, action, client_id=None):
     log_path = os.path.join(log_dir, "actions.log")
     try:
         with open(log_path, "a") as f:
-            f.write(f"[{datetime.now()}] {agent_name}: {action}\n")
+            f.write(f"[{datetime.now()}] {agent_name}: {action}\\n")
     except Exception as e:
         logger.error(f"Failed to log action for {agent_name}: {e}")
     logger.info(f"{agent_name}: {action}")
@@ -101,7 +107,7 @@ def evaluate_agent_quality(code):
         score += 1
     except SyntaxError as e:
         reasons.append(f"Syntax error: {e}")
-    if re.search(r"class \w+\s*(\(|:)", code):
+    if re.search(r"class \w+\\s*(\\(|:)", code):
         score += 1
     else:
         reasons.append("Missing class definition")
@@ -114,3 +120,5 @@ def evaluate_agent_quality(code):
     else:
         reasons.append("Missing log_action usage")
     return score, reasons
+
+
