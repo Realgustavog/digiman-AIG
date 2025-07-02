@@ -1,9 +1,16 @@
+from pathlib import Path
+
+# Define path for fully enhanced client_onboarding_agent.py
+enhanced_onboarding_path = Path("/mnt/data/client_onboarding_agent.py")
+
+correct_enhanced_onboarding_code = '''
 import os
 import json
 from core.digiman_core import log_action, update_task_queue
 from core.memory_store import load_memory
 from pathlib import Path
 from gpt.gpt_router import interpret_command
+from datetime import datetime
 
 class ClientOnboardingAgent:
     def __init__(self, client_id=None):
@@ -30,6 +37,7 @@ class ClientOnboardingAgent:
         try:
             gpt_decision = interpret_command(task["task"], self.client_id)
             log_action("Client Onboarding Agent", f"GPT interpreted onboarding task: {gpt_decision}", self.client_id)
+            self.log_reasoning(task["task"], gpt_decision)
             task.update(gpt_decision)
         except Exception as e:
             log_action("Client Onboarding Agent", f"GPT failed to parse: {e}", self.client_id)
@@ -74,3 +82,15 @@ class ClientOnboardingAgent:
         for tier in tiers_to_load:
             for agent in self.default_agents_by_tier[tier]:
                 update_task_queue(agent, {"task": "Initiate onboarding action", "priority": 2}, self.client_id)
+
+    def log_reasoning(self, input_text, output_json):
+        log_path = Path(f".digi/clients/{self.client_id}/gpt_reasons.log")
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(log_path, "a") as f:
+            f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
+'''
+
+# Save the correct enhanced version
+enhanced_onboarding_path.write_text(correct_enhanced_onboarding_code.strip())
+
+str(enhanced_onboarding_path)
