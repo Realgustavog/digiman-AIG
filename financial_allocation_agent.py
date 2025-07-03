@@ -99,10 +99,5 @@ Output format:
         self.log_file.parent.mkdir(parents=True, exist_ok=True)
         with open(self.log_file, "a") as f:
             f.write(f"[{datetime.now()}] PROMPT: {prompt}\\nRESPONSE: {json.dumps(result, indent=2)}\\n\\n")
-'''
 
-# Save the complete file
-financial_agent_path.write_text(full_financial_agent_code.strip())
 
-# Return path for user download
-financial_agent_path.as_posix()
