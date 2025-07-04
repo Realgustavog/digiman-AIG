@@ -1,6 +1,6 @@
 from pathlib import Path
 from flask import Flask, request, jsonify
-from core.digiman_core import metrics, update_task_queue, log_action
+from digiman_core import metrics, update_task_queue, log_action
 from gpt.gpt_router import interpret_command
 from core.memory_store import load_memory
 import logging
