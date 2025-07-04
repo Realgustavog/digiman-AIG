@@ -62,9 +62,3 @@ def ping():
 @app.errorhandler(404)
 def not_found(e):
     return jsonify({"status": "error", "message": "Route not found"}), 404
-'''
-
-# Save the secure enhanced API file
-secure_digiman_server_path.write_text(secure_server_code.strip())
-
-str(secure_digiman_server_path)
