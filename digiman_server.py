@@ -1,9 +1,4 @@
 from pathlib import Path
-
-# Define secure and feature-complete digiman_server.py
-secure_digiman_server_path = Path("/mnt/data/digiman_server.py")
-
-secure_server_code = '''
 from flask import Flask, request, jsonify
 from core.digiman_core import metrics, update_task_queue, log_action
 from gpt.gpt_router import interpret_command
