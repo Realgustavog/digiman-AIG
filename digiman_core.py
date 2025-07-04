@@ -1,9 +1,4 @@
 from pathlib import Path
-
-# Path to enhanced digiman_core.py
-core_path = Path("/mnt/data/digiman_core.py")
-
-enhanced_core_code = '''
 import os
 import json
 import logging
