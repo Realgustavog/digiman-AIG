@@ -44,6 +44,13 @@ CONFIG = load_config()
 logger = logging.getLogger("DigiManCore")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
 
+# === Sandbox Mode Integration ===
+SANDBOX_MODE = os.getenv("SANDBOX_MODE", "False").lower() == "true"
+
+def sandbox_log(agent_name, action, client_id=None):
+    if SANDBOX_MODE:
+        log_action(agent_name, f"[SANDBOX MODE] {action}", client_id)
+
 # === Global Metrics ===
 metrics = {
     "tasks_processed": 0,
@@ -120,5 +127,3 @@ def evaluate_agent_quality(code):
     else:
         reasons.append("Missing log_action usage")
     return score, reasons
-
-
