@@ -1,4 +1,3 @@
-# Logic for Franchise Relationship Agent
 # Re-executing after environment reset to generate the fully enhanced FranchiseRelationshipAgent for your DigiMan OS
 
 from pathlib import Path
