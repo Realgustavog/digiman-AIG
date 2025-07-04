@@ -1,4 +1,3 @@
-# Logic for Franchise Builder Agent
 # franchise_builder_agent.py – Full Enhanced Autonomous FranchiseBuilderAgent
 
 import os
