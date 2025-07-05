@@ -3,12 +3,54 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>DigiMan AI - Your Autonomous AI COO</title>
+    <title>DigiMan AI - Autonomous COO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f9f9f9;
+            padding: 50px;
+        }
+        h1 {
+            font-size: 2em;
+            color: #333;
+        }
+        p {
+            font-size: 1.2em;
+            color: #555;
+            max-width: 600px;
+            margin: auto;
+        }
+        form {
+            margin-top: 30px;
+        }
+        input, button {
+            padding: 12px;
+            margin: 8px;
+            font-size: 1em;
+            width: 250px;
+            max-width: 80%;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding: 50px;">
+<body>
     <h1>Welcome to DigiMan AI</h1>
-    <p>Your autonomous AI COO, ready to automate and grow your business.</p>
-    <p>We are currently setting up your personalized AI systems.</p>
-    <p>Check back soon or contact us to get onboarded early!</p>
+    <p>Your autonomous AI COO, ready to automate and grow your business.<br> We are currently setting up your personalized AI systems. Check back soon or subscribe below to get early access and updates.</p>
+
+    <form action="https://formspree.io/f/xvgrnqrk" method="POST">
+        <input type="text" name="first_name" placeholder="First Name" required><br>
+        <input type="text" name="last_name" placeholder="Last Name"><br>
+        <input type="email" name="email" placeholder="Your Email" required><br>
+        <button type="submit">Subscribe for Early Access</button>
+    </form>
 </body>
 </html>
