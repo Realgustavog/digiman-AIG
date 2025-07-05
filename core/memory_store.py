@@ -1,9 +1,4 @@
 from pathlib import Path
-
-# Define path for enhanced memory_store.py
-memory_store_path = Path("/mnt/data/memory_store.py")
-
-enhanced_memory_store_code = '''
 import json
 from pathlib import Path
 from datetime import datetime
@@ -37,9 +32,4 @@ def clear_memory(client_id):
     path = Path(f".digi/clients/{client_id}/memory.json")
     if path.exists():
         path.unlink()
-'''
 
-# Save the enhanced memory_store.py
-memory_store_path.write_text(enhanced_memory_store_code.strip())
-
-str(memory_store_path)
