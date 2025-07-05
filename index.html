@@ -1,56 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>DigiMan AI - Autonomous COO</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiMan AI - Your Autonomous AI COO</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            color: #fff;
             text-align: center;
-            background: #f9f9f9;
-            padding: 50px;
+            background: linear-gradient(135deg, #e60073, #6200ea); /* vibrant red-blue-purple */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         h1 {
-            font-size: 2em;
             color: #333;
+            margin-bottom: 0.5rem;
         }
         p {
-            font-size: 1.2em;
             color: #555;
-            max-width: 600px;
-            margin: auto;
+            margin-bottom: 1.5rem;
         }
         form {
-            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
-        input, button {
-            padding: 12px;
-            margin: 8px;
-            font-size: 1em;
-            width: 250px;
-            max-width: 80%;
+        input[type="text"],
+        input[type="email"] {
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
         }
         button {
-            background-color: #007BFF;
-            color: white;
+            padding: 0.75rem;
             border: none;
+            border-radius: 6px;
+            background-color: #6200ea;
+            color: #fff;
+            font-size: 1rem;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #4500a0;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to DigiMan AI</h1>
-    <p>Your autonomous AI COO, ready to automate and grow your business.<br> We are currently setting up your personalized AI systems. Check back soon or subscribe below to get early access and updates.</p>
+    <div class="container">
+        <h1>Welcome to DigiMan AI</h1>
+        <p>Your autonomous AI COO, ready to automate and grow your business.<br>
+        We are currently setting up your personalized AI systems.<br>
+        Check back soon or contact us to get onboarded early!</p>
 
-    <form action="https://formspree.io/f/xvgrnqrk" method="POST">
-        <input type="text" name="first_name" placeholder="First Name" required><br>
-        <input type="text" name="last_name" placeholder="Last Name"><br>
-        <input type="email" name="email" placeholder="Your Email" required><br>
-        <button type="submit">Subscribe for Early Access</button>
-    </form>
+        <form action="https://formspree.io/f/xvgrnqrk" method="POST">
+            <input type="text" name="First Name" placeholder="First Name" required>
+            <input type="text" name="Last Name" placeholder="Last Name">
+            <input type="email" name="Email" placeholder="Email" required>
+            <button type="submit">Join Pre-Launch List</button>
+        </form>
+    </div>
 </body>
 </html>
