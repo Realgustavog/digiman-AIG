@@ -1,9 +1,4 @@
 from pathlib import Path
-
-# Define path for enhanced autonomous_loop.py
-autonomous_loop_path = Path("/mnt/data/autonomous_loop.py")
-
-enhanced_autonomous_loop_code = '''
 import time
 from core.agent_loader import load_agents
 from core.digiman_core import log_action, update_task_queue, load_task_queue
@@ -53,9 +48,3 @@ class AutonomousLoop:
         log_path.parent.mkdir(parents=True, exist_ok=True)
         with open(log_path, "a") as f:
             f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
-'''
-
-# Save the enhanced autonomous_loop.py
-autonomous_loop_path.write_text(enhanced_autonomous_loop_code.strip())
-
-str(autonomous_loop_path)
