@@ -1,10 +1,3 @@
-# Dynamically loads agents from /agents/
-# Rebuild agent_loader.py with GPT reasoning logging and prep for future improvements
-from pathlib import Path
-
-agent_loader_path = Path("/mnt/data/agent_loader.py")
-
-fixed_agent_loader_code = '''
 import os
 import importlib.util
 from pathlib import Path
@@ -63,9 +56,3 @@ def load_agents(agent_dir="agents", client_id=None):
             log_action("Agent Loader", f"Error loading {file.name}: {e}", client_id)
 
     return AGENT_REGISTRY
-'''
-
-# Save the updated agent_loader.py
-agent_loader_path.write_text(fixed_agent_loader_code.strip())
-
-str(agent_loader_path)
