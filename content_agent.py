@@ -1,10 +1,3 @@
-# Logic for Content Agent
-from pathlib import Path
-
-# Define path for content_agent.py
-content_agent_path = Path("/mnt/data/content_agent.py")
-
-content_agent_code = '''
 import json
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -105,9 +98,3 @@ Add SEO keywords, CTA, and metadata.
             return None
         last = sorted(log, key=lambda x: x["timestamp"])[-1]
         return datetime.fromisoformat(last["timestamp"])
-'''
-
-# Save file
-content_agent_path.write_text(content_agent_code.strip())
-
-str(content_agent_path)
