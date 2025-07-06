@@ -1,10 +1,3 @@
-# Logic for Closer Agent
-from pathlib import Path
-
-# Define path for enhanced closer_agent.py
-closer_agent_path = Path("/mnt/data/closer_agent.py")
-
-enhanced_closer_agent_code = '''
 import os
 from core.digiman_core import log_action, update_task_queue
 from core.memory_store import load_memory
@@ -52,9 +45,3 @@ class CloserAgent:
         log_path.parent.mkdir(parents=True, exist_ok=True)
         with open(log_path, "a") as f:
             f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
-'''
-
-# Save the enhanced closer_agent.py
-closer_agent_path.write_text(enhanced_closer_agent_code.strip())
-
-str(closer_agent_path)
