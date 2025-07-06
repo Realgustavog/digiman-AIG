@@ -1,5 +1,3 @@
-# ==================== ScoutAgent.py (DigiMan OS) ====================
-
 import json
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -100,4 +98,3 @@ Respond in JSON:
         else:
             log_action("Scout Agent", "[AUTO_TRIGGER] Not due yet.", self.client_id)
 
-# ==================== END ScoutAgent.py ====================
