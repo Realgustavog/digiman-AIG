@@ -1,9 +1,4 @@
 from pathlib import Path
-
-# Define the save path for enhanced CRM agent
-crm_path = Path("/mnt/data/crm_agent.py")
-
-enhanced_crm_code = '''
 import json
 from pathlib import Path
 from core.digiman_core import log_action, update_task_queue
