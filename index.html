@@ -1,83 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DigiMan AI - Your Autonomous AI COO</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>DigiMan AI - Autonomous AI COO</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a40, #3f0071, #ff0054);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: #fff;
-            text-align: center;
-            background: linear-gradient(135deg, #e60073, #6200ea);
-            min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
         }
-        .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
         }
         h1 {
-            color: #333;
+            font-size: 2.5rem;
             margin-bottom: 0.5rem;
         }
         p {
-            color: #555;
-            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
         }
         form {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
         }
-        input[type="text"],
-        input[type="email"] {
-            padding: 0.75rem;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+        input, button {
+            width: 90%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border: none;
             font-size: 1rem;
+        }
+        input {
+            background: #fff;
+            color: #000;
         }
         button {
-            padding: 0.75rem;
-            border: none;
-            border-radius: 6px;
-            background-color: #6200ea;
+            background: #ff0054;
             color: #fff;
-            font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            font-weight: bold;
         }
         button:hover {
-            background-color: #4500a0;
+            background: #e6004c;
         }
         .logo {
-            max-width: 120px;
-            margin-bottom: 1rem;
+            margin-top: 30px;
+            width: 120px;
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <img src="static/digiman.png" alt="DigiMan Logo" class="logo">
-        <h1>Welcome to DigiMan AI</h1>
-        <p>Your autonomous AI COO, ready to automate and grow your business.<br>
-        We are currently setting up your personalized AI systems.<br>
-        Check back soon or contact us to get onboarded early!</p>
+    <h1>Welcome to DigiMan AI</h1>
+    <p>Your autonomous AI COO, ready to automate and grow your business.<br>
+    We are currently setting up your personalized AI systems.<br>
+    Check back soon or get early onboarding below!</p>
 
-        <form action="https://formspree.io/f/xvgrnqrk" method="POST">
-            <input type="text" name="First Name" placeholder="First Name" required>
-            <input type="text" name="Last Name" placeholder="Last Name">
-            <input type="email" name="Email" placeholder="Email" required>
-            <button type="submit">Join Pre-Launch List</button>
+    <form action="https://formspree.io/f/xvgrnqrk" method="POST">
+        <input type="text" name="first_name" placeholder="First Name" required /><br>
+        <input type="text" name="last_name" placeholder="Last Name" required /><br>
+        <input type="email" name="email" placeholder="Email Address" required /><br>
+        <button type="submit">Join Pre-Launch List</button>
+    </form>
+
+    <img src="static/digiman.png" alt="DigiMan Logo" class="logo" />
+</body>
+</html>
+
         </form>
     </div>
 </body>
