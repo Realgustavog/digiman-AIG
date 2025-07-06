@@ -1,10 +1,3 @@
-from pathlib import Path
-
-# Define path for enhanced manager_agent.py
-manager_agent_path = Path("/mnt/data/manager_agent.py")
-
-enhanced_manager_code = '''
-# Logic for Manager Agent
 import json
 from core.digiman_core import log_action, update_task_queue
 from core.memory_store import load_memory
@@ -81,11 +74,3 @@ class ManagerAgent:
         self.reasoning_log.parent.mkdir(parents=True, exist_ok=True)
         with open(self.reasoning_log, "a") as f:
             f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
-'''
-
-# Save the enhanced manager_agent.py
-manager_agent_path.write_text(enhanced_manager_code.strip())
-
-str(manager_agent_path)
-
-
