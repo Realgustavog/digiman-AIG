@@ -1,10 +1,3 @@
-# Logic for Autonomous Sales Replicator
-from pathlib import Path
-
-# Define path for enhanced autonomous_sales_replicator.py
-replicator_path = Path("/mnt/data/autonomous_sales_replicator.py")
-
-enhanced_replicator_code = '''
 import json
 from core.digiman_core import log_action, update_task_queue
 from core.memory_store import load_memory
@@ -68,9 +61,3 @@ class AutonomousSalesReplicator:
         log_path.parent.mkdir(parents=True, exist_ok=True)
         with open(log_path, "a") as f:
             f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
-'''
-
-# Save the file
-replicator_path.write_text(enhanced_replicator_code.strip())
-
-str(replicator_path)
