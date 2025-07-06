@@ -1,11 +1,3 @@
-# Re-executing after environment reset to generate the fully enhanced FranchiseRelationshipAgent for your DigiMan OS
-
-from pathlib import Path
-
-# Path to save the fully enhanced FranchiseRelationshipAgent
-franchise_relationship_agent_path = Path("/mnt/data/franchise_relationship_agent.py")
-
-franchise_relationship_agent_code = '''
 import json
 import os
 from datetime import datetime, timedelta
