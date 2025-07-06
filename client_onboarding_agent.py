@@ -1,9 +1,3 @@
-from pathlib import Path
-
-# Define path for fully enhanced client_onboarding_agent.py
-enhanced_onboarding_path = Path("/mnt/data/client_onboarding_agent.py")
-
-correct_enhanced_onboarding_code = '''
 import os
 import json
 from core.digiman_core import log_action, update_task_queue
@@ -88,9 +82,4 @@ class ClientOnboardingAgent:
         log_path.parent.mkdir(parents=True, exist_ok=True)
         with open(log_path, "a") as f:
             f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
-'''
 
-# Save the correct enhanced version
-enhanced_onboarding_path.write_text(correct_enhanced_onboarding_code.strip())
-
-str(enhanced_onboarding_path)
