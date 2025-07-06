@@ -1,11 +1,3 @@
-# Logic for Financial Allocation Agent
-from pathlib import Path
-
-# Define the full file path for the enhanced Financial Allocation Agent
-financial_agent_path = Path("/mnt/data/financial_allocation_agent.py")
-
-# Full complete code for Financial Allocation Agent
-full_financial_agent_code = '''
 import os
 import json
 from datetime import datetime
