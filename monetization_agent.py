@@ -1,10 +1,3 @@
-# Logic for Monetization Agent
-from pathlib import Path
-
-# Define enhanced path for MonetizationAgent
-enhanced_path = Path("/mnt/data/monetization_agent.py")
-
-enhanced_monetization_agent = '''
 import json
 import os
 from core.digiman_core import log_action, update_task_queue
@@ -100,9 +93,3 @@ Propose:
                 "task": f"Retention risk on low revenue clients: {json.dumps(low)}",
                 "priority": 1
             }, self.client_id)
-'''
-
-# Save final enhanced file
-enhanced_path.write_text(enhanced_monetization_agent.strip())
-
-str(enhanced_path)
