@@ -1,5 +1,3 @@
-# partnership_scout_agent.py - DigiMan Partnership Scout Agent
-
 import json
 from pathlib import Path
 from datetime import datetime
