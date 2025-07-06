@@ -1,10 +1,3 @@
-# Logic for Sales Agent
-# Rebuilding the sales_agent.py with original logic + new GPT enhancements
-from pathlib import Path
-
-sales_agent_path = Path("/mnt/data/sales_agent.py")
-
-full_sales_agent_code = '''
 import os
 import json
 import random
@@ -67,9 +60,4 @@ class SalesAgent:
         log_path.parent.mkdir(parents=True, exist_ok=True)
         with open(log_path, "a") as f:
             f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
-'''
 
-# Save the correct and fully enhanced sales_agent.py
-sales_agent_path.write_text(full_sales_agent_code.strip())
-
-str(sales_agent_path)
