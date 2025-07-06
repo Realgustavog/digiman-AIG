@@ -1,10 +1,3 @@
-from pathlib import Path
-
-# Define path for enhanced marketing_agent.py
-marketing_agent_path = Path("/mnt/data/marketing_agent.py")
-
-enhanced_marketing_code = '''
-# Logic for Marketing Agent
 import json
 from core.digiman_core import log_action, update_task_queue
 from core.memory_store import load_memory
@@ -110,10 +103,3 @@ class MarketingAgent:
         log_path.parent.mkdir(parents=True, exist_ok=True)
         with open(log_path, "a") as f:
             f.write(f"[{datetime.now()}] INPUT: {input_text}\\nOUTPUT: {output_json}\\n\\n")
-'''
-
-# Save the enhanced marketing_agent.py
-marketing_agent_path.write_text(enhanced_marketing_code.strip())
-
-str(marketing_agent_path)
-
